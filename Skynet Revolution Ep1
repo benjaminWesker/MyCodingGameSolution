@@ -1,0 +1,141 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+ class Network {
+     
+    private List<String> gateawayNode = new ArrayList<String>();
+    private List<String> linkNode = new ArrayList<String>();
+    
+    public Network(){
+
+    }
+   
+    public Network( List<String> gateawayNode, List<String> linkNode){
+        this.gateawayNode = gateawayNode;
+        this.linkNode = linkNode;
+    }
+   
+    public void setGateaway(List<String> gateawayNode){
+         this.gateawayNode = gateawayNode;
+     }
+     
+    public void setLink(List<String> link){
+         this.linkNode = link;
+     }
+     
+    public List<String> getGateaway(){
+         return gateawayNode;
+     }
+     
+    public List<String> getLink( ){
+         return linkNode;
+     }
+
+    public void initLinkNode(List<String> ListAllLink){
+        
+         for(Iterator<String> it = ListAllLink.iterator() ; it.hasNext(); ){
+             
+             String[] link = it.next().split(" ");
+             
+             for(Iterator<String> it2 = gateawayNode.iterator(); it2.hasNext();){
+                    String door = it2.next(); 
+                    
+                    if( link[0].equals(door) || link[1].equals(door) ){
+                        linkNode.add(link[0] + " " + link[1]);
+                        break;
+                    }
+            
+             }
+         }
+         
+    }
+    
+    public void removeLinkToDataBase(String link){
+        try{
+           linkNode.remove(link); 
+        }
+        catch(Exception e){
+            System.err.print("link not found !");
+        }
+        
+    }
+    
+    public String findTheWayToAgent(Integer positionAgent){
+        String linkToClose = "";
+        // Recherche porte commune avec agent
+        for(Iterator<String> it = linkNode.iterator(); it.hasNext();){
+            String[] commonLink = it.next().split(" ");
+            
+            if(commonLink[0].equals(positionAgent.toString() ) || commonLink[1].equals(positionAgent.toString()) ){
+                linkToClose = commonLink[0] + " " + commonLink[1];
+                break;
+            }
+        }
+        System.err.print("lien à fermer : " + linkToClose);
+        
+        if(linkToClose.isEmpty() )
+            linkToClose = linkNode.get(0); // fermeture de la 1er porte par defaut
+
+        removeLinkToDataBase(linkToClose);
+        
+        return linkToClose;
+        
+    }
+    
+}
+
+class Player {
+
+    public static void main(String args[]) {
+        
+        
+        Network network = new Network();
+        
+        Scanner in = new Scanner(System.in);
+        
+        int N = in.nextInt(); // the total number of nodes in the level, including the gateways
+        int L = in.nextInt(); // the number of links
+        int E = in.nextInt(); // the number of exit gateways
+        
+        System.err.print("Nombre de noeud = " + N);
+        System.err.print(" Nombre de lien = " + L);
+        System.err.print(" Nombre de passerelles = " + E + "\n");
+        
+        //enregistrement de tous les liens de la map
+        List<String> listLink = new ArrayList<String>();
+        for (int i = 0; i < L; i++) {
+            int N1 = in.nextInt(); // N1 and N2 defines a link between these nodes
+            int N2 = in.nextInt();
+            listLink.add(N1 + " " + N2);
+            System.err.println("Liens entre le noeud " + N1 + " et " + N2);
+        }
+        
+        
+        List<String> listTemporaire = new ArrayList<String>();
+        for (int i = 0; i < E; i++) {
+            int EI = in.nextInt(); // the index of a gateway node
+            listTemporaire.add("" + EI);
+            System.err.println("Index de la passerelle " + EI);
+        }
+        
+        //initialisation des linked-door et doors dans network
+        network.setGateaway(listTemporaire);
+        network.initLinkNode(listLink);
+   
+
+        // game loop
+        while (true) {
+            int SI = in.nextInt(); // The index of the node on which the Skynet agent is positioned this turn
+            System.err.println("Position de l'agent(noeud) : " + SI);
+
+            String link = network.findTheWayToAgent(SI);
+            
+    
+            // Example: 0 1 are the indices of the nodes you wish to sever the link between
+            System.out.println(link);
+        }
+    }
+    
+
+}
