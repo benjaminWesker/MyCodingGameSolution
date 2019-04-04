@@ -1,0 +1,180 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+
+
+class Tree<T> {
+    
+    private T data = null;
+    
+    private List<Tree<T>> children = new ArrayList<Tree<T>>();
+    
+    private Tree<T> parent = null;
+    
+    public Tree(T data){
+        this.data = data;
+    }
+    
+    
+    // creation d'un nouveau noeud, enfant de celui-ci
+    public Tree<T> createChild(Tree<T> child){
+        //on lui donne ce noeud en papa
+        child.setParent(this);
+        //on ajoute au papa le noeud a creer
+        this.children.add(child);
+        // on retourne le noeud
+        return child;
+    }
+    
+    public void addChildren(List<Tree<T>> newChildren){
+        //pour chaque enfant de la liste, on définis ce noeud comme papa
+        newChildren.forEach(each -> each.setParent(this) );
+        //on ajoute à notre liste d'enfants les nouveaux enfants
+        this.children.addAll(newChildren);
+    }
+    
+    
+    public void setParent(Tree<T> parent){
+        this.parent = parent;
+    }
+    
+    public void setData(T data){
+        this.data = data;
+    } 
+       
+
+    public List<Tree<T>> getChildren(){
+        return this.children;
+    }
+    
+    public Tree<T> getParent(){
+        return this.parent;
+    }
+    
+    public T getData(){
+        return this.data;
+    }
+
+    public Tree<T> getRoot(){
+        
+        if(parent == null)
+            return this;
+        else{
+            return parent.getRoot();
+        }
+    }
+
+    public int getCountofChildren(){
+        int count = 0;            
+        
+        count++;
+        for(Tree<T> each : getChildren() ){
+            
+            count += each.getCountofChildren();
+            
+        }
+    
+        return count;
+        
+    }
+  
+    public boolean dataExistinChildren( T data ){
+        
+        for(Tree<T> each : getChildren() ){
+
+            if(each.getData() == data ){
+                return true;
+            }
+           
+        }
+        return false;
+        
+    }
+    
+    public Tree<T> getChild(T data){
+        
+        for(Tree<T> each : getChildren() ){
+            if(each.getData() == data ){
+                return each;
+            }
+           
+        }
+        return null;
+        
+    }
+}
+
+
+
+class Solution {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        
+        List<Tree<Integer>> listParents = new ArrayList<Tree<Integer>>();
+        
+        Tree<Integer> father = null; 
+        int N = in.nextInt();
+        for (int i = 0; i < N; i++) {    
+            String telephone = in.next();
+
+            Integer chiffre =  Character.getNumericValue( telephone.charAt(0) );
+            
+            boolean familyExist = false;
+            
+            for(Tree<Integer> each : listParents ){
+               
+                //si le chiffre [0] n'existe dans ma liste de parents, je le créér
+               if( each.getData() == chiffre ){
+                    familyExist = true;
+                    father = each;
+                    break;
+               }
+            }
+            
+            if(!familyExist){
+                father = new Tree(chiffre) ;
+                listParents.add( father );
+            }
+            
+            // Le pére à été construit !!
+            int j = 1;
+            while( j < telephone.length() ){
+                // pour chaque chiffre
+                chiffre =  Character.getNumericValue( telephone.charAt(j) );
+                Tree<Integer> newChild = null;
+            
+                //éditer les liens avec le pére
+                if( !father.dataExistinChildren( chiffre  )  ){
+                    //un des enfants de father ne contiens pas notre chiffre
+                    newChild = father.createChild( new Tree<Integer>(chiffre) );
+                }
+                else {
+                    newChild = father.getChild( chiffre );
+                }
+
+                father = newChild;
+                
+                j++;
+            }
+            
+            listParents.set( listParents.indexOf(  father.getRoot()  ), father.getRoot() );
+
+        } 
+        
+        
+        int count = 0;  
+        
+        for(Tree<Integer> tree : listParents ){
+            count += tree.getCountofChildren();
+        }    
+        
+          System.out.println(count);  
+   
+        
+ 
+    }
+        
+
+}
