@@ -1,0 +1,116 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Solution {
+
+    public static void main(String args[]) {
+        
+        Map<Integer,String> dico = new HashMap<Integer, String>();
+        Map<Integer,String> dicoSuppr = new HashMap<Integer, String>();
+        
+        Scanner in = new Scanner(System.in);
+        
+        
+        int N = in.nextInt();
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+        for (int i = 0; i < N; i++) {
+            String W = in.nextLine();
+//           System.err.println(W);
+            dico.put(i, W);
+        }
+        String LETTERS = in.nextLine();
+        
+        
+        dico.forEach((k,v)->{
+            
+            for(int i = 0; i < v.length(); i++){     
+                if( LETTERS.indexOf(  v.charAt(i) )  <= -1 || v.length() > LETTERS.length() || !hasAllLetters(LETTERS, v , Character.toString(v.charAt(i)) )  ){
+                    dicoSuppr.put( k , v);
+                    break;
+                    
+                }
+ 
+            }
+            
+        }); 
+            
+        dicoSuppr.forEach((k,v)-> dico.remove(k,v) );            
+
+        
+        String result = "no word found";
+        int maxP = 0;
+        
+        
+// on compte les points
+        for(Map.Entry<Integer, String> each : dico.entrySet() ) {
+            String v = each.getValue();
+//            System.err.println("counting : " + v);
+            int nbPoint = 0;
+            for(int i = 0; i < v.length(); i++)
+                nbPoint += countPoint(v.charAt(i) );
+
+            if( nbPoint > maxP ){
+                result = v;
+            }
+            
+            maxP = Math.max( maxP, nbPoint  );            
+		}
+        
+        
+        
+
+        System.out.println(result);
+    }
+    
+    private static int countPoint(char letter){
+            int result = 0;
+            switch ( letter ){
+                
+                case 'd' :
+                case 'g' : result = 2; break;                    
+                case 'b' :                
+                case 'c' :
+                case 'm' :                   
+                case 'p' : result = 3; break;
+                case 'f' :                    
+                case 'h' :                
+                case 'v' :
+                case 'w' :                     
+                case 'y' : result = 4; break;
+                case 'k' : result = 5; break;                  
+                case 'j' : result = 8; break;              
+                case 'q' :
+                case 'z' : result = 10; break;                
+                default  : result = 1; break;
+    
+            }
+            
+            return result;
+        
+    }
+    
+    private static boolean hasAllLetters(String main, String dico, String letter){
+          int handW = main.length() - main.replace(letter, "" ).length();  
+          int dicoW = dico.length() - dico.replace(letter, "" ).length(); 
+            
+//          System.err.println("--------------------------------------");   
+//          System.err.println("lettre rechercher : " + letter );
+//          System.err.println("présente " + dicoW + " fois dans le mot  :  " + dico );
+//          System.err.println("présente " + handW + " fois dans la main : " + main );
+//          System.err.println("--------------------------------------");   
+            
+          if( dicoW > handW)
+            return false;
+         else
+            return true;
+          
+        
+    }
+}
