@@ -1,0 +1,69 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Don't let the machines win. You are humanity's last hope...
+ **/
+class Player {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int width = in.nextInt(); // the number of cells on the X axis
+        int height = in.nextInt(); // the number of cells on the Y axis
+        System.err.println("XY :  " + width + " " + height);
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+        String[] lines = new String[height];
+        for (int i = 0; i < height; i++) {
+            String line = in.nextLine(); // width characters, each either 0 or .
+            lines[i] = line; //une ligne X
+            System.err.print(line + "\n");
+        }
+
+        String noeud = "";
+        for(int y = 0 ; y < height; y++){
+            for(int x = 0 ; x < width; x++){
+                
+                int x1 = -1;
+                int y1 = -1;
+                 
+                if( lines[y].charAt(x) == '0' ){
+                    // POUR CHAQUE NOEUD 
+                    /*************************
+                     * RECHERCHE DES NOEUD VOISINS */
+                     x1 = x;
+                     y1 = y;
+                     
+                     int x2 = -1;
+                     int y2 = -1;
+                    //on cherche a droite 
+                    for(int i = x1+1; i < width; i++){
+                        if( lines[y1].charAt(i) == '0' ){
+                            x2 = i;
+                            y2 = y1;
+                            break;
+                        }
+                    }
+                    
+                    int x3 = -1;
+                    int y3 = -1;
+                    
+                    //on cherche en dessous
+                    for(int j = y1+1; j < height; j++){
+                        if( lines[j].charAt(x1) == '0' ){
+                            x3 = x1;
+                            y3 = j;
+                            break;
+                        }
+                    }
+ 
+                System.out.println(x1 + " " + y1 + " " + x2 + " " + y2 + " " + x3 + " " + y3);    
+                }  
+                
+           }
+       }
+  
+    }
+}
