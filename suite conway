@@ -1,0 +1,69 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Solution {
+
+    public static void main(String args[]) {
+        
+        List<String> conway = new ArrayList<String>();
+        
+        Scanner in = new Scanner(System.in);
+        Integer R = in.nextInt();
+        int L = in.nextInt();
+
+        
+        String line = R.toString();
+        conway.add(line);
+        for(int i = 1; i < L; i++){
+            line = getNewLine(line);
+            conway.add(line);
+        }
+        
+        System.out.println( conway.get(L-1) );
+       
+
+    }
+    
+    private static String getNewLine(String element){
+        String line = "";
+        
+        String[] elements = element.split(" ");
+        
+        String currentElement = elements[0];
+
+        int i = 0;
+        
+        while( i < elements.length ){
+            
+            int compteur = 0;
+        
+            currentElement = elements[i]; 
+            
+            while( elements[i].equals(currentElement) ) {
+                
+                i++;
+              
+                compteur ++;
+                
+                if(i == elements.length )
+                    break;
+            }
+
+            line += compteur + " " +  currentElement;   
+            if(i < elements.length ){
+                line += " ";
+
+            }
+                  
+            
+        }
+
+        return line;
+    }
+    
+}
