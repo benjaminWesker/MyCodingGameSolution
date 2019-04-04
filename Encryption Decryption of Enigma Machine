@@ -1,0 +1,188 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+
+class Enigma {
+
+	private String message;
+	private String[] rotor;
+	private int pseudoRandomNumber;
+
+	public Enigma(String message, String[] rotor, int pseudoRandomNumber) {
+		this.message = message;
+		this.rotor = rotor;
+		this.pseudoRandomNumber = pseudoRandomNumber;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public String[] getRotor() {
+		return rotor;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public void setRotor(String[] rotor) {
+		this.rotor = rotor;
+	}
+
+	public int getPseudoRandomNumber() {
+		return pseudoRandomNumber;
+	}
+
+	public void setPseudoRandomNumber(int pseudoRandomNumber) {
+		this.pseudoRandomNumber = pseudoRandomNumber;
+	}
+
+	/* ==============---------------------------------------- */
+	/* ENCODE MESSAGE */
+	/*--------------------------------========================*/
+	public String encode() {
+
+		String encodedMessage = shiftMessage(this.message);
+		String[] ROTOR = this.rotor;
+
+		for (int k = 0; k < ROTOR.length; k++) {
+
+			char[] charConverti = encodedMessage.toCharArray();
+			encodedMessage = "";
+
+			for (int j = 0; j < charConverti.length; j++) {
+
+				int index = (int) charConverti[j] - 65;
+
+				encodedMessage += ROTOR[k].charAt(index);
+
+			}
+
+		}
+
+		return encodedMessage;
+	}
+
+	private String shiftMessage(String message) {
+
+		int pseudoRandomNumber = this.pseudoRandomNumber;
+
+		char[] conv = message.toCharArray();
+
+		String messageConverti = "";
+
+		for (int i = 0; i < conv.length; i++) {
+
+			int c = (int) conv[i] - 65 + pseudoRandomNumber + i;;
+
+			while (c > 25) {
+
+				c -= 26;
+
+			}
+
+			messageConverti += Character.toString((char) (c + 65));
+
+		}
+
+		return messageConverti;
+
+	}
+
+	/* ==============---------------------------------------- */
+	/* DECODE MESSAGE */
+	/*--------------------------------========================*/
+
+	public String decode() {
+
+		String decodedMessage = this.message;
+		String[] ROTOR = this.rotor;
+
+		for (int k = ROTOR.length - 1; k >= 0; k--) {
+
+			char[] charConverti = decodedMessage.toCharArray();
+			decodedMessage = "";
+
+			for (int j = 0; j < charConverti.length; j++) {
+
+				char conv = (char) (ROTOR[k].indexOf(charConverti[j]) + 65);
+
+				decodedMessage += conv;
+
+			}
+
+		}
+
+		return unShiftMessage(decodedMessage);
+	}
+
+	private String unShiftMessage(String message) {
+
+		char[] conv = message.toCharArray();
+
+		String messageConverti = "";
+
+		for (int i = 0; i < message.length(); i++) {
+
+			int c = (int) conv[i] - 65 - pseudoRandomNumber - i;
+
+			while (c < 0) {
+
+				c += 26;
+
+			}
+
+			messageConverti += Character.toString((char) (c + 65));
+		}
+
+		return messageConverti;
+	}
+
+	@Override
+	public String toString() {
+		return "Enigma [message=" + message + ", rotor=" + Arrays.toString(rotor) + "]";
+	}
+}
+
+class Solution {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        String operation = in.nextLine();
+        int pseudoRandomNumber = in.nextInt();
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+        
+
+        String[] rotor = {"","",""};
+        for(int i = 0; i <3 ; i++){
+            rotor[i] = in.nextLine();
+        }
+
+        String message = in.nextLine();
+        
+        String resultat = "";
+        
+        Enigma enigma = new Enigma( message, rotor, pseudoRandomNumber );
+        
+        
+        /*==============----------------------------------------*/ 
+        if(operation.equals("ENCODE") ){
+            
+           resultat = enigma.encode();
+           
+        } else {
+            
+           resultat = enigma.decode();
+        }
+        
+
+        System.out.println( resultat );     
+
+       
+    }
+   
+}
