@@ -1,0 +1,86 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ * ---
+ * Hint: You can use the debug stream to print initialTX and initialTY, if Thor seems not follow your orders.
+ **/
+class Player {
+
+    public static final int maxY = 18;
+    public static final int maxX = 40;
+    
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int lightX = in.nextInt(); // the X position of the light of power
+        int lightY = in.nextInt(); // the Y position of the light of power
+        int initialTX = in.nextInt(); // Thor's starting X position
+        int initialTY = in.nextInt(); // Thor's starting Y position
+        int positionY = initialTY;
+        int positionX = initialTX;
+        int directionY;
+        int directionX;
+        
+
+        String where;
+        // game loop
+        while (true) {
+            int remainingTurns = in.nextInt(); // The remaining amount of turns Thor can move. Do not remove this line.
+
+            // Write an action using System.out.println()
+            // To debug: System.err.println("Debug messages...");
+
+            if( (positionY == 0 || positionY == maxY ) && remainingTurns != 36 )
+                directionY = 0;
+            else
+                directionY = positionY - lightY;
+            // Y > 0 => NORD ; Y < 0 => SUD ; Y = 0 => IMMOBILE
+            if( (positionX == 0 || positionX == maxX)  && remainingTurns != 36 )
+                directionX = 0;
+            else           
+                directionX = lightX - positionX;            
+            // X > 0 => EST ; X < 0 => OUEST ; X = 0 => IMMOBILE
+            
+            System.err.println("positionY: " + positionY);
+            System.err.println("positionX: "+ positionX);
+            System.err.println("directionX: " + directionX);
+            System.err.println("directionY: " + directionY);
+            
+            
+            if (directionY > 0){
+                where = "N";
+                positionY--;
+            }
+            else{
+                if(directionY < 0){
+                    where = "S";
+                    positionY++;
+                }
+                else { // directionY = 0
+                    where = "";
+                }
+            
+            }
+            
+           if (directionX > 0){
+                where += "E";
+                positionX++;
+            }
+            else{
+                if(directionX < 0){
+                     where += "W";
+                     positionX--;
+                }
+                else { // directionX = 0
+                    where += "";
+                }
+            }
+
+            // A single line providing the move to be made: N NE E SE S SW W or NW
+            System.out.println(where);
+        }
+    }
+}
