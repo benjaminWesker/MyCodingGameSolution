@@ -1,0 +1,70 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+
+class Solution {
+    
+    private static Double calculDistance(Double x, Double y){
+        
+        return Math.sqrt( (x*x) + (y*y) ) * 6371;
+    }
+    
+    private static Double calculX(Double longitudeA, Double longitudeB,Double latitudeA, Double latitudeB){
+        
+        return (longitudeB - longitudeA) * Math.cos(  ( latitudeA+latitudeB ) / 2   );
+    }
+    
+    private static Double calculY(Double latitudeA, Double latitudeB){
+        
+        return (latitudeB - latitudeA);
+        
+    }
+    
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        String LON = in.next();
+        String LAT = in.next();
+        int N = in.nextInt();
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+        
+        Double longitudeA = Math.toRadians( Double.parseDouble( LON.replace(",",".") ) );
+        Double latitudeA = Math.toRadians( Double.parseDouble( LAT.replace(",",".") ) );
+        
+        Double nearest = -1.0;
+        String resultat = "";
+        for (int i = 0; i < N; i++) {
+            String DEFIB = in.nextLine();
+            
+            //récupération de chaque adresse :
+            String[] adresse = DEFIB.split(";");
+  /*          
+            for(int j = 0; j < adresse.length; j++)
+                System.out.print(adresse[j]);
+            System.out.println("");   
+ */ 
+            Double longitudeB = Math.toRadians( Double.parseDouble( adresse[4].replace(",",".") ) );
+            Double latitudeB = Math.toRadians( Double.parseDouble( adresse[5].replace(",",".") ) );
+            
+            Double distance = calculDistance(calculX(longitudeA, longitudeB, latitudeA, latitudeB ) , calculY( latitudeA,  latitudeB ));
+             if(nearest == -1){
+                  nearest = distance;
+                  resultat = adresse[1];
+             }
+             else {
+                if (Math.abs(nearest) >= Math.abs(distance) ){
+                    nearest = distance;
+                    resultat = adresse[1];
+                }
+             }     
+
+        }
+
+
+        System.out.println(resultat);
+      
+    }
+}
