@@ -131,6 +131,13 @@ class Player {
             String message = "AhAhAhAh !";
             
             int nbrCoupZombieSurvivantMin = Integer.MAX_VALUE;
+            
+            int distanceJoeurSurvivantMin = Integer.MAX_VALUE;
+            int distanceJoueurZombieMin = Integer.MAX_VALUE; 
+            
+            int targetSurv = -1;
+            int targetZomb = -1;
+
 
             boolean noTarget = true;
 
@@ -143,6 +150,7 @@ class Player {
                     
                     int distanceSurvivantZombie = calculDistance( eachSurvivant.getCoordonnees().getX(),  eachZombie.getCoordonnees().getX(), eachSurvivant.getCoordonnees().getY(),  eachZombie.getCoordonnees().getY() );
                     int distanceZombiesJoueur =  calculDistance( eachZombie.getCoordonnees().getX(), x, eachZombie.getCoordonnees().getY(), y );
+                    
                     if( distanceZombiesJoueur <= 2400){
                         message += "DIE ! ";
                     } 
@@ -171,7 +179,6 @@ class Player {
                                     }
                                     else {
                                         destination = survivants.get(eachSurvivant.getId()).getCoordonnees();
-
                                     }
                                     
                                     noTarget = false;
@@ -179,14 +186,31 @@ class Player {
 
                         }
                     } else {
-                            if( noTarget ){
-                                destination  = zombies.get(eachZombie.getId()).getCoordonnees();
-                                noTarget = false;
 
-                            }
+                                
+                            distanceJoeurSurvivantMin = Math.min(distanceJoeurSurvivantMin, distanceSurvivantJoueur );
+                            distanceJoueurZombieMin = Math.min(distanceJoueurZombieMin, distanceZombiesJoueur);
+                            
+                            if(distanceJoeurSurvivantMin == distanceSurvivantJoueur)
+                                targetSurv =  eachSurvivant.getId();
+                            if(distanceJoueurZombieMin == distanceZombiesJoueur )
+                                targetZomb = eachZombie.getId();
                     }
 
                 }
+                
+                
+                if (noTarget){
+                    
+                    if( distanceJoeurSurvivantMin < distanceJoueurZombieMin){
+                        destination = survivants.get( targetSurv ).getCoordonnees();
+                    }
+                    else {                        
+                        destination = zombies.get( targetZomb ).getCoordonnees();
+                    }
+                    
+                }
+                
             }
             
 
