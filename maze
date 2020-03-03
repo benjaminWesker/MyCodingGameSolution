@@ -1,0 +1,134 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Solution {
+    
+	private static char[][] map;
+	 
+	static List<Coords> listeSorties = new ArrayList<>();    
+    
+	public static class Coords {
+		int X,Y;
+
+		public Coords(int x, int y) {
+			this.X = x;
+			this.Y = y;
+		}
+		
+		public Coords[] voisinage() {
+							// au dessus			// a droite			// en dessous		 // a gauche
+			Coords[] res = { new Coords(X, Y-1)  , new Coords(X+1, Y), new Coords(X, Y+1) , new Coords(X-1, Y)     };
+			return res;
+		}
+		
+		public boolean equals(Coords s) {
+			return this.X == s.X && this.Y == s.Y;
+		}
+		
+	    public int getX() {
+			return X;
+		}
+
+		public int getY() {
+			return Y;
+		}
+	
+	}
+	
+	public static char map(Coords s) {
+		return map[s.Y][s.X];
+	}
+	
+	public static void setMap(Coords s, char c) {
+		map[s.Y][s.X] = c;
+	}
+	
+	public static boolean isInMap(Coords s) {
+		return s.X >= 0 && s.X < map[0].length && s.Y >= 0 && s.Y < map.length; 
+	}
+	
+	public static boolean isAWall(Coords s) {
+		return map(s) == '#' ? true : false;
+	}    
+	
+	public static void explored(Coords position) {
+		setMap(position, '0');
+	}
+	
+	public static boolean isExplored(Coords position) {
+		return map(position) == '0' ? true : false;
+	} 
+	
+    public static boolean goTo(Coords start, Coords prec) {
+
+		Coords[] voisins = start.voisinage();
+		
+		if(!isExplored(start) )
+			explored(start);
+		else 
+			return false;
+		
+		for(int i = 0; i < voisins.length ; i++) {
+			Coords n = voisins[i];
+	
+			if(isInMap(n) ) {
+					if( !isAWall(n) && !n.equals(prec)) {
+						goTo(n,start);					
+					}
+			}
+			else {
+					listeSorties.add(start);
+					return true;
+			}
+
+			
+		}
+        
+		return false;
+   }    
+    
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int W = in.nextInt();
+        int H = in.nextInt();
+        int X = in.nextInt();
+        int Y = in.nextInt();
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+         
+         
+        String[] lab = new String[H];
+        map = new char[H][W];
+        
+        for (int i = 0; i < H; i++) {
+            String ligne = in.nextLine();
+    
+            map[i] = ligne.toCharArray();
+        }
+        
+	    Coords start = new Coords(X,Y);  ;
+	    goTo(start, new Coords(-1,-1));
+	    
+
+		System.out.println(listeSorties.size());
+		// afficher liste		
+		Comparator<Coords> comparator = Comparator.comparing(Coords::getX).thenComparing(Comparator.comparing(Coords::getY));
+        Collections.sort( listeSorties,comparator );
+
+		Iterator<Coords> iter = listeSorties.iterator();
+		while (iter.hasNext()) {
+			Coords print = iter.next();
+		    System.out.println(print.X + " " + print.Y);
+		}	        
+        
+			
+
+    }
+}
