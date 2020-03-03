@@ -1,0 +1,105 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Player {
+
+    private static int middleLnie(int A, int n){
+        int res = (int)Math.floor( (A+n)/2 );
+        return res;
+      
+    }
+
+    
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int W = in.nextInt(); // width of the building.
+        int H = in.nextInt(); // height of the building.
+        int N = in.nextInt(); // maximum number of turns before game over.
+        int X0 = in.nextInt(); //position de depart en X
+        int Y0 = in.nextInt(); //position de depart en Y
+        
+        int minX = 0;
+        int minY = 0;
+        String dirPrec = "T";
+
+        while (true) {
+            String bombDir = in.next(); // the direction of the bombs from batman's current location (U, UR, R, DR, D, DL, L or UL)
+  
+            //Ne pas aller deux fois dans le même sens si on a deux directions
+            if(bombDir.length() >= 2){
+                //U D L or R found
+           
+                if( bombDir.indexOf(dirPrec) != -1){
+                    bombDir =  dirPrec;
+                }
+                    
+            }
+   
+          for( int i =0; i < bombDir.length(); i++ ){ 
+                switch (bombDir.charAt(i)){
+    
+                    // aller au millieu     
+                    case ('U')  :  // UP
+                        
+                        H = Y0;
+                        
+                        // Yo zero = milleu de [0, Y0]
+                        Y0 = middleLnie(minY, Y0);
+                        
+                        
+                        
+                        break;
+                    // aller au millieu     
+                    case ('D')  :  // DOWN
+                    
+                        minY = Y0;
+                        
+                       // Yo zero = milleu de [Y0, H]
+                        Y0 = middleLnie(Y0, H);
+    
+                        break;
+                    // aller au millieu     
+                    case ('L')  :  // LEFT
+                    
+                        W = X0;
+                    
+                        // Xo zero = milleu de [0, X0]
+                        X0 = middleLnie(minX, X0);        
+                        
+                        
+                        
+                        break;                    
+                    // aller au millieu     
+                    case ('R')  :  // RIGHT
+                        
+                        minX = X0;
+                
+                    // Xo zero = milleu de [X0, W]
+                        X0 = middleLnie(X0, W);   
+                        
+                        
+                        
+                        break;
+               
+                        
+                    //rester au meme endroit
+                    default:
+                    break;
+                }
+   
+            }
+            dirPrec = bombDir; // U L R OR D
+   
+            // the location of the next window Batman should jump to.
+            System.out.println(X0 + " " + Y0);
+        }
+        
+    }
+
+}
