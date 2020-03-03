@@ -1,0 +1,100 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Player {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int W = in.nextInt(); // number of columns.
+        int H = in.nextInt(); // number of rows.
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+        int[][] typeRoom = new int[W][H]; // X Y
+        
+        for (int i = 0; i < H; i++) {
+            String LINE = in.nextLine(); // represents a line in the grid and contains W integers. Each integer represents one room of a given type.
+            String[] ligne = LINE.split(" ");
+            for(int j = 0; j < W; j++){
+                typeRoom[j][i] = Integer.parseInt(ligne[j]); 
+                System.err.print(typeRoom[j][i] + "  ");
+            }
+             System.err.print("\n");
+        }
+        int EX = in.nextInt(); // the coordinate along the X axis of the exit (not useful for this first mission, but must be read).
+        System.err.print("Exit :" + EX + "\n");
+        // game loop
+        while (true) {
+            int XI = in.nextInt();
+            int YI = in.nextInt();
+            String POS = in.next();
+            System.err.println("position : " + XI + " " + YI + " " + POS + " Room : " + typeRoom[XI][YI] );
+
+            //room = typeRoom[XI][YI]
+            String res = getNextRoom(XI, YI, POS,typeRoom[XI][YI] );
+
+
+            // One line containing the X Y coordinates of the room in which you believe Indy will be on the next turn.
+            System.out.println(res);
+        }
+    }
+    
+    
+    private static String getNextRoom(int X, int Y, String POS, int room){
+        
+        int nx = X;
+        int ny = Y;
+        
+        switch (room){
+            case 0 :  break;
+            case 1 :  ny++; break;
+            case 2 :    
+                        if(POS.equals("LEFT") )
+                            nx++;
+                         else
+                            nx--;
+                        break;
+                
+            case 3 :  ny++; break;
+            case 4 : 
+                      if(POS.equals("TOP") )
+                            nx--;
+                         else
+                            ny++;
+                        break;
+            case 5 :
+                        if(POS.equals("LEFT") )
+                            ny++;
+                         else
+                            nx++;
+                        break;
+            case 6 :
+                        if(POS.equals("LEFT") )
+                            nx++;
+                         else
+                            nx--;
+                        break;
+            case 7 :  ny++; break;
+            case 8 :  ny++; break;
+            case 9 :  ny++; break;
+            case 10 : nx--; break;
+            case 11 : nx++; break;               
+            case 12 : ny++; break;
+            case 13 : ny++; break;
+            default :  break;    
+             
+        }
+        
+        return nx + " " + ny;
+        
+        
+        
+    }
+    
+    
+}
