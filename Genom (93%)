@@ -1,0 +1,98 @@
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+class Solution {
+		
+	public static String allSequence(int n, String[] seq) {
+
+	 	String s1 = concatSequenceCommune(seq[n-1], seq[n],  sequenceCommune( seq[n-1],seq[n]) );
+	 	String s2 = concatSequenceCommune(seq[n], seq[n-1],  sequenceCommune( seq[n],seq[n-1]) );
+
+		if( n == 0 || n == 1  ) {
+	 		return  shortestSequence(s1, s2);
+		}
+		else {
+			String[] newSeq = {  s1   , seq[n-2]  };
+			String a = allSequence( n-1, newSeq  );
+			newSeq[0] =   s2;
+			String b = allSequence( n-1, newSeq  );
+			return  shortestSequence(a,b);
+		}
+				
+	}
+	
+	public static String longestSequence(String s1,String s2) {
+		return s1.length() <= s2.length() ? s2 : s1 ;
+	}
+	
+	public static String shortestSequence(String s1,String s2) {
+		return s1.length() > s2.length() ? s2 : s1 ;
+	}
+	
+	public static boolean isSequencePossible(String subseq, String seq, String ch ) {
+        return( (ch.contains(subseq) && seq.length() == subseq.length() ) || (( seq.startsWith(subseq)  && ch.endsWith(subseq)  ) || ( seq.endsWith(subseq)  && ch.startsWith(subseq)  ) ) ) ;
+	}
+	
+	public static String sequenceCommune(String s1, String s2){
+
+      String chaineCommun = "";
+       
+       String sc = s1;
+       for(int i = 0; i < s1.length(); i++) {
+    	   
+            String sT = s1.substring(i, s1.length());
+            sc = sc.substring(0, sc.length()-1);
+              
+            if(isSequencePossible(sT, s1, s2) ) {
+                chaineCommun = sT;
+                break;
+            }   	      	    	    
+            if(isSequencePossible(sc, s1, s2) ){
+                chaineCommun = sc;
+                break;
+            }    
+      }
+      return chaineCommun;
+	}	
+		
+	
+	public static String concatSequenceCommune(String s1, String s2, String sCommune) {
+		 return s2.substring(0, s2.indexOf(sCommune)) + s1 + s2.substring(s2.indexOf(sCommune)+sCommune.length(), s2.length());
+	}
+		
+	public static String[] permute(String[] subseq) {
+		String[] subseqP = new String[subseq.length];
+		
+		for(int i = 0; i < subseq.length; i++) {
+			subseqP[i] = subseq[(subseq.length-1)-i];
+		}
+		return subseqP;
+	}
+		
+	public static void main(String args[]) {
+
+        Scanner in = new Scanner(System.in);
+        int N = in.nextInt();
+    
+        String[] subseq = new String[N];
+        for (int i = 0; i < N; i++) {
+            subseq[i] = in.next();
+            
+        }
+          String resultat = subseq[0];
+        
+       if(N>1){
+        String res1= allSequence(subseq.length-1,subseq);
+        String res2 = allSequence(subseq.length-1,permute(subseq));
+        resultat = shortestSequence(res1, res2)  ;
+       }
+     
+       System.out.println(resultat.length() );
+	        
+    }
+
+	    
+}	    
+
