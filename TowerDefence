@@ -1,0 +1,261 @@
+package test;
+
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+
+
+public class Solution {
+
+	private static char[][] map;
+	static int height;
+	static int width;
+	
+	static List<Coords> tours = new ArrayList<>();
+	static List<Coords> soldiers = new ArrayList<>();
+	
+	static class Coords{
+		
+		int x,y;
+
+		public Coords(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		public Coords[] voisinage(int v) {
+			
+			Coords[] res = { 
+					 		 new Coords(x+2, y+v)	, new Coords(x+1, y+v),
+							 new Coords(x-2, y+v)	, new Coords(x-1, y+v) 
+							 };
+			return res;
+		}
+
+		public boolean equals(Coords s) {
+			return this.x == s.x && this.y == s.y;
+		}
+			
+		public int getX() {
+			return x;
+		}
+			
+		public int getY() {
+			return y;
+		}
+		
+	}
+	
+	public static boolean isInMap(Coords s) {
+		return s.x >= 0 && s.x < map[0].length && s.y >= 0 && s.y < map.length; 
+	}
+	
+	public static char map(Coords s) {
+		return map[s.y][s.x];
+	}
+	
+	public static void setMap(Coords s, char c) {
+		map[s.y][s.x] = c;
+	}
+	public static boolean isATower(Coords s) {
+		return map(s) == 'T' ? true : false;
+	}
+	
+	public static boolean isASoldier(Coords s) {
+		return map(s) != 'T' && map(s) != '.' ? true : false;
+	}
+	
+	public static boolean avanceAll() {
+	
+		List<Coords> destroyedSoldiers = new ArrayList<>();
+		
+		Iterator<Coords> iter = soldiers.iterator();
+		
+		while (iter.hasNext()) {
+			
+			Coords s = iter.next();
+			
+			if(!avance(s)) {
+				if( !isInMap(s) )
+					return true;
+				else
+					destroyedSoldiers.add(s);
+			}			
+		}	
+		
+		destroySoldiers(destroyedSoldiers);
+
+		return false;		
+	}
+	
+	public static boolean avance(Coords s){
+		
+		char hp = map(s);
+		Coords a = s;
+		
+		setMap(s, '.');
+		a.y -= 1;
+		
+	
+		if( !isInMap(a) ) {
+			return false;
+		}
+
+		
+		if( isATower(a)  ) {
+			return false;
+		}
+		
+		
+		s = a;
+		setMap(s, hp);
+		return true;
+		
+	}
+	
+	public static void towerShoot() {
+		
+		Iterator<Coords> iter = tours.iterator();
+		while (iter.hasNext()) {
+			shootAt( getClosestSoldier( iter.next() ) );
+		}	
+		
+	}
+	
+	public static void shootAt(Coords s){
+		
+		if(s != null) {
+			int hp = Character.getNumericValue( map(s)) - 1;  
+				if( hp < 1) {
+					setMap(s, '.' );
+					destroySoldier(s);
+				} else {
+					setMap(s, (char)('0' + hp) );			
+				}
+			
+		}
+
+	}
+	
+	public static boolean isDead(Coords s) {
+		return map(s) == '.'? true : false;
+	}
+	
+	public static void destroySoldier(Coords s) {
+
+		Iterator<Coords> iter = soldiers.iterator();
+		Coords d = null;
+		while (iter.hasNext()) {
+			d = iter.next();
+			if(d.equals(s))
+				break;
+		}	
+		
+		soldiers.remove(d);
+		
+	}
+	
+	public static void destroySoldiers(List<Coords> ds) {
+		soldiers.removeAll(ds);
+	}
+	
+	public static Coords getClosestSoldier(Coords s) {
+		
+		for(int i=-2; i <= 2; i++) {
+			
+			Coords[] voisins = s.voisinage(i);
+			
+			for(int j = 0; j < voisins.length; j++) {
+				if(isInMap(	voisins[j]) && isASoldier(voisins[j]) ) {			
+						 	return voisins[j];
+						}
+			}
+		}
+		
+		return null;
+		
+	}
+	
+	public static boolean win() {
+		return soldiers.isEmpty();
+	}
+	
+	public static void initializeMap() {
+		
+		for(int y = 0; y < height ; y++) {
+			for(int x=0; x < width; x++) {
+				
+				Coords s = new Coords(x,y);
+			
+				if( isASoldier(s))
+					soldiers.add(s);
+				if(isATower(s))
+					tours.add(s);
+				
+			}			
+		}
+	}
+	
+	public static void printMap() {
+		for(int y = 0; y < height ; y++) {
+			for(int x=0; x < width; x++) {
+				
+				System.out.print(map(new Coords(x,y) )+ " ");
+				
+				
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void printList(List<Coords> l) {
+		
+		Iterator<Coords> iter = l.iterator();
+		while (iter.hasNext()) {
+			Coords c = iter.next();
+			System.out.println(c.x + "," + c.y )  ;
+   
+		}	
+		
+	}
+	
+	public static void main(String args[]) {	
+
+        Scanner in = new Scanner(System.in);
+        width = in.nextInt();
+        height = in.nextInt();
+        
+        map = new char[height][width];
+        
+        for (int i = 0; i < height; i++) {
+            String line = in.next();
+            map[i] = line.toCharArray();      
+        }
+		
+		initializeMap();
+		
+		int round = 0;
+		
+		boolean win = false;
+		boolean lose =  false;
+		
+		do {
+			round++;
+	
+			printMap();
+		
+			towerShoot();
+
+			win = win();
+			 
+		  lose = avanceAll() ;
+
+		}while( !win && !lose );
+		
+		String endGame = win ? "WIN" : "LOSE";
+		System.out.println("\nLa partie est " + endGame + " en " + round + " tours" );
+		
+	}
+}
